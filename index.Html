@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Will You Be My Valentine 💖</title>
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
+}
+html, body{
+  height:100%;
+  overflow:hidden;
+}
+
+/* BACKGROUND */
+#slider{
+  height:100vh;
+  width:100%;
+  background-size:cover;
+  background-position:center;
+  transition:0.7s ease;
+  position:relative;
+}
+
+/* OVERLAY */
+.overlay{
+  height:100%;
+  width:100%;
+  background:rgba(0,0,0,0.45);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  color:white;
+  padding:20px;
+}
+
+h1{
+  font-size:2.4rem;
+  margin-bottom:10px;
+}
+
+p{
+  font-size:1.2rem;
+  margin-bottom:20px;
+  min-height:30px;
+}
+
+/* BUTTONS */
+.btns{
+  display:flex;
+  gap:15px;
+}
+
+button{
+  padding:12px 30px;
+  border:none;
+  border-radius:25px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.yes{ background:#ff4d6d; color:white; }
+.no{ background:#444; color:white; position:relative; }
+.next{ background:#ff4d6d; color:white; }
+
+/* END PHOTOS – FREE SIZE */
+.photos{
+  display:none;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap:15px;
+  margin-top:20px;
+  width:90%;
+  max-width:320px;
+}
+
+.photos img{
+  width:100%;
+  height:auto;
+  object-fit:contain;
+  border-radius:14px;
+  border:2px solid white;
+  background:#000;
+  box-shadow:0 6px 15px rgba(0,0,0,0.4);
+}
+
+/* HEARTS */
+.heart{
+  position:absolute;
+  color:#ff4d6d;
+  animation: floatUp 6s linear infinite;
+}
+
+@keyframes floatUp{
+  from{ transform:translateY(100vh); opacity:1; }
+  to{ transform:translateY(-10vh); opacity:0; }
+}
+
+/* TYPEWRITER */
+.typewriter{
+  display:inline-block;
+  border-right: 2px solid white;
+  white-space: nowrap;
+  overflow: hidden;
+  animation: blink 0.7s infinite;
+}
+
+@keyframes blink{
+  0%,100%{ border-color:transparent; }
+  50%{ border-color:white; }
+}
+</style>
+</head>
+<body>
+
+<audio id="music" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<div id="slider">
+  <div class="overlay">
+    <h1 id="title"></h1>
+    <p id="wish" class="typewriter"></p>
+
+    <div class="btns" id="ynBtns">
+      <button class="yes" onclick="accept()">Yes 💖</button>
+      <button class="no" onclick="moveNo()">No 🙈</button>
+    </div>
+
+    <button class="next" id="nextBtn" onclick="nextSlide()" style="display:none;">
+      Next ➜
+    </button>
+
+    <div class="photos" id="photos">
+      <img src="images/pic1.jpg">
+      <img src="images/pic2.jpg">
+      <img src="images/pic3.jpg">
+      <img src="images/pic4.jpg">
+    </div>
+  </div>
+</div>
+
+<script>
+const slides = [
+  { bg:"images/proposal.jpg", title:"Will you be my Valentine? 💖", wish:"Dil se pooch raha hoon ❤️", first:true },
+  { bg:"images/rose.jpg", title:"Rose Day 🌹", wish:"Har rose ki khushboo tum jaisi ho ❤️" },
+  { bg:"images/propose.jpg", title:"Propose Day 💍", wish:"I choose you 💖" },
+  { bg:"images/chocolate.jpg", title:"Chocolate Day 🍫", wish:"Meethi si zindagi tumhare sath" },
+  { bg:"images/teddy.jpg", title:"Teddy Day 🧸", wish:"Tum mera cutest teddy ho" },
+  { bg:"images/promise.jpg", title:"Promise Day 🤞", wish:"Har haal me sath nibhaunga" },
+  { bg:"images/hug.jpg", title:"Hug Day 🤗", wish:"Ek hug me sab keh diya" },
+  { bg:"images/kiss.jpg", title:"Kiss Day 💋", wish:"Mohabbat ka ehsaas" },
+  { bg:"images/valentine.jpg", title:"Happy Valentine’s Day ❤️", wish:"You are my forever", end:true }
+];
+
+let index = 0;
+
+const slider = document.getElementById("slider");
+const title = document.getElementById("title");
+const wish = document.getElementById("wish");
+const ynBtns = document.getElementById("ynBtns");
+const nextBtn = document.getElementById("nextBtn");
+const photos = document.getElementById("photos");
+const music = document.getElementById("music");
+
+function typeWriter(text, i = 0){
+  if(i < text.length){
+    wish.innerHTML += text.charAt(i);
+    setTimeout(()=> typeWriter(text,i+1),50);
+  }
+}
+
+function loadSlide(){
+  slider.style.backgroundImage = `url(${slides[index].bg})`;
+  title.innerText = slides[index].title;
+  wish.innerHTML = "";
+  typeWriter(slides[index].wish);
+
+  ynBtns.style.display = slides[index].first ? "flex" : "none";
+  nextBtn.style.display = slides[index].first ? "none" : "block";
+  photos.style.display = slides[index].end ? "grid" : "none";
+}
+
+function accept(){
+  music.play();
+  startHearts();
+  index++;
+  loadSlide();
+}
+
+function moveNo(){
+  const btn = document.querySelector(".no");
+  btn.style.position="absolute";
+  btn.style.left=Math.random()*80+"%";
+  btn.style.top=Math.random()*80+"%";
+}
+
+function nextSlide(){
+  if(index < slides.length - 1){
+    index++;
+    loadSlide();
+  }
+}
+
+function startHearts(){
+  setInterval(()=>{
+    const heart = document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"vw";
+    heart.style.fontSize=(Math.random()*20+15)+"px";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),6000);
+  },300);
+}
+
+loadSlide();
+</script>
+
+</body>
+</html>
